@@ -1,14 +1,3 @@
-// React 16 Context/Store/Provider
-// CSS Sprite Animator - Make CSS BoxSprite Animations
-// 
-// New    - Start a new Animation
-// Add    - Add frame after current position
-// Delete - Delete current frame
-// Copy   - Copy frame - also keyboard c
-// Past   - Past Copied frame - also keybord v
-// Shift cell using Arrow keys up/down/left/right
-//
-// github.com/pjkarlik/css-sprite-animatior
 const clone = array => {
   return JSON.parse(JSON.stringify(array));
 };
@@ -46,15 +35,9 @@ for (let i = 0; i < cellLength; i++) {
     color: ColorList[0]
   });
 }
-// Because it's a 1D Array we use some math to figure
-// the x and y
 const matrixExpand = (x, y) => {
   return x + height * y;
 };
-// Im importing frames from a seprate js file
-// you can also start blank or use your own array.
-// just set to const frames = [.....];
-// https://codepen.io/pjkarlik/pen/9b13a69326ed8b383d0decbb0361f8b2 
 const f = frames.length > 0 ? clone(frames) : [clone(blankArray)];
 const initialState = {
   frames: f,
@@ -67,15 +50,12 @@ const initialState = {
   copyArray: clone(blankArray),
   blankArray
 };
-// Create Store object
 const Store = React.createContext(initialState);
 
-// Store Functions
 const exportFrames = (state) => {
-  // Exports to a json array
   const { height, width, frames } = state;
-  const expportFrames = clone(frames);
-  let dataSet = expportFrames.map((frame) => {
+  const exportFrames = clone(frames);
+  let dataSet = exportFrames.map((frame) => {
     return frame.map((still, index) => {
       const x = index % width;
       const y = (index - x) / height;
@@ -214,11 +194,9 @@ const shiftFrame = (state, direction) => {
     canvasArray: matrix
   };
 };
-// End Store Functions
 
-// Reducer function
 const reducer = (state, action) => {
-switch (action.type) {
+  switch (action.type) {
     case "UPDATE_CURRENT":
       return updateCurrent(state, action.index);
     case "UPDATE_COLOR":
@@ -227,8 +205,6 @@ switch (action.type) {
       return updatePixel(state, action.index);
     case "SHIFT_FRAME":
       return shiftFrame(state, action.direction);
-    case "SAVE_FRAME":
-      return saveFrame(state);
     case "NEW_FRAME":
       return newFrame(state);
     case "ADD_FRAME":
@@ -245,25 +221,20 @@ switch (action.type) {
       return state;
   }
 };
-// Set up Store Provider
+
 const StoreProvider = ({ children }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  return (
-    <Store.Provider value={{ state, dispatch }}>{children}</Store.Provider>
-  );
+  return React.createElement(Store.Provider, { value: { state, dispatch } }, children);
 };
-// End Store and Store Provider
 
-// Top Controlls
 const Controlls = () => {
   const { dispatch } = React.useContext(Store);
-   React.useEffect(() => {
+  React.useEffect(() => {
     document.addEventListener("keyup", event => {
       checkKey(event);
     });
   }, []);
 
-  // Basic keyboard stuff
   const checkKey = event => {
     const code = event.keyCode;
     switch (code) {
@@ -315,130 +286,112 @@ const Controlls = () => {
     }
   };
 
-  return (
-    <ul className="controls">
-      <li>
-        <a
-          className="links"
-          href="#"
-          role="button"
-          onClick={() => {
-            dispatch({
-              type: "NEW_FRAME"
-            });
-          }}
-        >
-          new
-        </a>
-      </li>
-      <li>
-        <a
-          className="links"
-          href="#"
-          role="button"
-          onClick={() => {
-            dispatch({
-              type: "ADD_FRAME"
-            });
-          }}
-        >
-          add
-        </a>
-      </li>
-      <li>
-        <a
-          className="links"
-          href="#"
-          role="button"
-          onClick={() => {
-            dispatch({
-              type: "DELETE_FRAME"
-            });
-          }}
-        >
-          delete
-        </a>
-      </li>
-      <li>
-        <a
-          className="links"
-          href="#"
-          role="button"
-          onClick={() => {
-            dispatch({
-              type: "COPY_FRAME"
-            });
-          }}
-        >
-          copy
-        </a>
-      </li>
-      <li>
-        <a
-          className="links"
-          href="#"
-          role="button"
-          onClick={() => {
-            dispatch({
-              type: "PASTE_FRAME"
-            });
-          }}
-        >
-          paste
-        </a>
-      </li>
-      <li>
-        <a
-          className="links"
-          href="#"
-          role="button"
-          onClick={(e) => {
-            e.preventDefault();
-            dispatch({
-              type: "EXPORT_FRAMES"
-            });
-          }}
-        >
-          export
-        </a>
-      </li>
-    </ul>
+  const controls = React.createElement("ul", { className: "controls" },
+    React.createElement("li", null,
+      React.createElement("a", {
+        className: "links",
+        href: "#",
+        role: "button",
+        onClick: () => {
+          dispatch({
+            type: "NEW_FRAME"
+          });
+        }
+      }, "new")
+    ),
+    React.createElement("li", null,
+      React.createElement("a", {
+        className: "links",
+        href: "#",
+        role: "button",
+        onClick: () => {
+          dispatch({
+            type: "ADD_FRAME"
+          });
+        }
+      }, "add")
+    ),
+    React.createElement("li", null,
+      React.createElement("a", {
+        className: "links",
+        href: "#",
+        role: "button",
+        onClick: () => {
+          dispatch({
+            type: "DELETE_FRAME"
+          });
+        }
+      }, "delete")
+    ),
+    React.createElement("li", null,
+      React.createElement("a", {
+        className: "links",
+        href: "#",
+        role: "button",
+        onClick: () => {
+          dispatch({
+            type: "COPY_FRAME"
+          });
+        }
+      }, "copy")
+    ),
+    React.createElement("li", null,
+      React.createElement("a", {
+        className: "links",
+        href: "#",
+        role: "button",
+        onClick: () => {
+          dispatch({
+            type: "PASTE_FRAME"
+          });
+        }
+      }, "paste")
+    ),
+    React.createElement("li", null,
+      React.createElement("a", {
+        className: "links",
+        href: "#",
+        role: "button",
+        onClick: (e) => {
+          e.preventDefault();
+          dispatch({
+            type: "EXPORT_FRAMES"
+          });
+        }
+      }, "export")
+    )
   );
+
+  return controls;
 };
-// End Top Controlls
- 
-// Color Palette
+
 const ColorPalette = props => {
   const { state, dispatch } = React.useContext(Store);
   const { currentColor, palette } = state;
 
   const colorpalette = palette.map(color => {
-    const isActive = color == currentColor ? 'active' : '';
-    const transparent = color == "transparent" ? color : '';
+    const isActive = color === currentColor ? 'active' : '';
+    const transparent = color === "transparent" ? color : '';
     const classString = `box plt ${isActive} ${transparent}`;
-    return (
-      <a
-        role="button"
-        tabIndex="0"
-        href="#"
-        key={`colorCode_${color}`}
-        className={classString}
-        style={{ background: color }}
-        onClick={() => {
-          dispatch({
-            type: "UPDATE_COLOR",
-            color
-          });
-        }}
-      >{`${color}`}</a>
-    );
+    return React.createElement("a", {
+      role: "button",
+      tabIndex: "0",
+      href: "#",
+      key: `colorCode_${color}`,
+      className: classString,
+      style: { background: color },
+      onClick: () => {
+        dispatch({
+          type: "UPDATE_COLOR",
+          color
+        });
+      }
+    }, `${color}`);
   });
 
-  return <div className="palette">{colorpalette}</div>;
+  return React.createElement("div", { className: "palette" }, colorpalette);
 };
-// End Color Palette
 
-// Canvas Window Area
 const CanvasWindow = (props) => {
   const { size } = props;
   const { state, dispatch } = React.useContext(Store);
@@ -451,32 +404,25 @@ const CanvasWindow = (props) => {
     const pixelSet = canvasArray.map((cell, index) => {
       const x = index % width;
       const y = (index - x) / height;
-      let object;
-      object = (
-        <a
-          key={`pixelButton-${x}-${y}`}
-          className="box"
-          style={{ background: cell.color }}
-          onClick={()=>{
-            dispatch({
-              type: "UPDATE_PIXEL",
-              index
-            });
-          }}
-         >
-          &nbsp;
-        </a>
-      );
+      let object = React.createElement("a", {
+        key: `pixelButton-${x}-${y}`,
+        className: "box",
+        style: { background: cell.color },
+        onClick: () => {
+          dispatch({
+            type: "UPDATE_PIXEL",
+            index
+          });
+        }
+      }, "\xA0");
 
       pixelRow.push(object);
       if (x === width - 1) {
-        const rowStyle = size > 0 ? `${size}px` : 'auto';
-        const row = (
-          <div className={size > 0 ?
-           'pixelrow ' : 'row'} style={{ height: size }} key={`row${y}`}>
-            {pixelRow}
-          </div>
-        );
+        const row = React.createElement("div", {
+          className: size > 0 ? 'pixelrow ' : 'row',
+          style: { height: size },
+          key: `row${y}`
+        }, pixelRow);
         pixelRow = [];
         return row;
       }
@@ -484,16 +430,12 @@ const CanvasWindow = (props) => {
     return pixelSet;
   };
 
-  return (
-    <div className="canvas"
-      style={{ width: `${size * width}px`, height: `${size * height}px` }}>
-      {generateFrame()}
-    </div>
-  );
+  return React.createElement("div", {
+    className: "canvas",
+    style: { width: `${size * width}px`, height: `${size * height}px` }
+  }, generateFrame());
 };
-// End Canvas Window
 
-// CSS Frame Generation
 const CssFrame = props => {
   const { frame, size } = props;
   const { state } = React.useContext(Store);
@@ -502,13 +444,12 @@ const CssFrame = props => {
   const generateCSSFrame = (data, size) => {
     if (data === undefined) data = blankArray;
     let cssString = "";
-    data.map((cell, index) => {
+    data.forEach((cell, index) => {
       if (cell.color !== "transparent") {
         const x = index % width;
         const y = (index - x) / height;
         if (index > 0 && cssString !== "") cssString += ",";
-        cssString += `${~~(size * (x + 1))}px ${~~(size * (y + 1))}px` +
-          ` 0 ${cell.color}`;
+        cssString += `${~~(size * (x + 1))}px ${~~(size * (y + 1))}px 0 ${cell.color}`;
       }
     });
     const inlineStyle = {
@@ -519,13 +460,11 @@ const CssFrame = props => {
       boxShadow: cssString,
       margin: -size
     };
-    return <div style={inlineStyle}> </div>;
+    return React.createElement("div", { style: inlineStyle });
   };
   return generateCSSFrame(frame, size);
 };
-// End CSS Frame Generation
 
-// Animation Window
 const AnimationWindow = props => {
   const { size } = props;
   const { state } = React.useContext(Store);
@@ -545,11 +484,9 @@ const AnimationWindow = props => {
     return () => clearTimeout(timer);
   });
 
-  return <CssFrame size={size} frame={frames[stepFrame]} />;
+  return React.createElement(CssFrame, { size: size, frame: frames[stepFrame] });
 };
-// End Animation Window
 
-// Frame List Window
 const FramesWindow = (props) => {
   const { state, dispatch } = React.useContext(Store);
   const { frames, width, height, currentFrame } = state;
@@ -562,31 +499,23 @@ const FramesWindow = (props) => {
     };
   };
 
-  return (
-    <ul className="framescontainer">
-      {frames.map((frame, index) => {
-        return (
-          <li
-            className={currentFrame === index ? 'frame active' : 'frame'}
-            style={frameStyle(size)}
-            key={`frame-${index}`}
-            onClick={() => { 
-              dispatch({
-                type: "UPDATE_CURRENT",
-                index
-              });
-            }}
-          >
-            <CssFrame frame={frame} width={width} height={height} size={size} />
-          </li>
-        );
-      })}
-    </ul>
-  );
-};
-// End Frame List Window
+  const framesList = frames.map((frame, index) => {
+    return React.createElement("li", {
+      className: currentFrame === index ? 'frame active' : 'frame',
+      style: frameStyle(size),
+      key: `frame-${index}`,
+      onClick: () => {
+        dispatch({
+          type: "UPDATE_CURRENT",
+          index
+        });
+      }
+    }, React.createElement(CssFrame, { frame: frame, width: width, height: height, size: size }));
+  });
 
-// Main Animator Controll 
+  return React.createElement("ul", { className: "framescontainer" }, framesList);
+};
+
 const SpriteAnimator = props => {
   const size = 20;
   const { state } = React.useContext(Store);
@@ -599,31 +528,23 @@ const SpriteAnimator = props => {
     };
   };
   const pvSize = 4;
-  return (
-    <div className="container">
-      <div className="appcontainer">
-        <Controlls />
-        <ColorPalette />
-        <CanvasWindow size={pixelSize} />
-        <div className="preview" style={previewContainer(pvSize)}>
-          <AnimationWindow size={pvSize} />
-        </div>
-        <FramesWindow size={2} />
-      </div>
-    </div>
+  return React.createElement("div", { className: "container" },
+    React.createElement("div", { className: "appcontainer" },
+      React.createElement(Controlls, null),
+      React.createElement(ColorPalette, null),
+      React.createElement(CanvasWindow, { size: pixelSize }),
+      React.createElement("div", { className: "preview", style: previewContainer(pvSize) },
+        React.createElement(AnimationWindow, { size: pvSize })
+      ),
+      React.createElement(FramesWindow, { size: 2 })
+    )
   );
 };
-// End Main Animator Controll 
 
-// Wrap store around parent element
 const Main = () => {
-  return (
-    <StoreProvider>
-      <SpriteAnimator />
-    </StoreProvider>
+  return React.createElement(StoreProvider, null,
+    React.createElement(SpriteAnimator, null)
   );
 };
 
-// Attach to DOM and BOOM lets go!
-ReactDOM.render(<Main/>, document.getElementById('react-mount'));
-
+ReactDOM.render(React.createElement(Main, null), document.getElementById('react-mount'));
